@@ -4,6 +4,7 @@ const { parseCSV } = require("../services/csv.service");
 const { getTemplate } = require("../templates");
 const crypto = require("crypto");
 const { log, error } = require("../utils/logger");
+const WAIT_BETWEEN_MESSAGES = process.env.WAIT_BETWEEN_MESSAGES || 120000 ; // pega do .env
 
 const router = Router();
 
@@ -76,7 +77,7 @@ router.post("/", async (req, res) => {
           error(requestId, `Erro envio linha ${i} item ${j}`, err.message);
         }
       }
-        await new Promise(r => setTimeout(r, 120000));
+        await new Promise(r => setTimeout(r, WAIT_BETWEEN_MESSAGES));
     }
 
 
