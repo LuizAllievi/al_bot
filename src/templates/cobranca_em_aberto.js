@@ -1,4 +1,6 @@
 const { createMediaFromUrl } = require("./enviar_arquivo"); // função para baixar arquivos e criar Media
+const API_HOST = process.env.API_HOST; // pega do .env
+
 
 module.exports = async (row) => {
   const telefone = row[3];
@@ -67,7 +69,7 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
 
 
 
-  var media = await createMediaFromUrl(`https://localhost:8443/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
+  var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
   if (media) {
     messages.push({
       type: "media",
@@ -78,7 +80,7 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
 
   for (id in consultingIds) {
 
-    var media = await createMediaFromUrl(`https://localhost:8443/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
+    var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
     if (media) {
       messages.push({
         type: "media",
