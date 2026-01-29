@@ -1,5 +1,5 @@
 const { createMediaFromUrl } = require("../templates/enviar_arquivo"); // função para baixar arquivos e criar Media
-const API_HOST = process.env.API_HOST; // pega do .env
+const API_HOST = process.env.API_HOST ||  "https://localhost:8443"; // pega do .env
 
 
 module.exports = async (row) => {
