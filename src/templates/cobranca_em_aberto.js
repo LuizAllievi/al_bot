@@ -1,4 +1,4 @@
-const { createMediaFromUrl } = require("../templates/enviar_arquivo"); // função para baixar arquivos e criar Media
+const { createMediaFromUrl } = require("./enviar_arquivo"); // função para baixar arquivos e criar Media
 
 module.exports = async (row) => {
   const telefone = row[3];
@@ -7,6 +7,16 @@ module.exports = async (row) => {
   const billetId = row[0];
   const companyName = row[1];
   const dueDate = row[2];
+  const nfLink = row[4];
+  let nfText = "";
+
+  if (typeof nfLink === "string" && nfLink.trim() !== "") {
+
+    nfText = `
+
+E a nota fiscal está disponível para download no link: ${nfLink}.`;
+  }
+
   let consultingIds = [];
   if (row[5] && typeof row[5] === "string") {
     consultingIds = row[5]
@@ -49,15 +59,13 @@ module.exports = async (row) => {
     body: `
 Olá, ${managerName}!🙋🏻‍♂️
        
-Informamos que não identificamos o pagamento do boleto do plano de Gestão de Telefonia da empresa ${companyName}, com vencimento em ${dueDate}.
+A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.
     
-Caso o pagamento tenha sido efetuado, seria possível no encaminhar o comprovante?
-     
-Estamos enviando novamente o boleto em anexo. ${consultingInvoicesText}
-
-Caso surgir alguma dúvida ou dificuldade para efetuar o pagamento, nossa equipe de suporte está à disposição.
-    `.trim()
+Os boletos seguem abaixo ⬇️${nfText}`.trim()
   });
+
+
+
 
   var media = await createMediaFromUrl(`https://localhost:8443/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
   if (media) {
@@ -79,6 +87,7 @@ Caso surgir alguma dúvida ou dificuldade para efetuar o pagamento, nossa equipe
       });
     }
   }
+
 
   if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
