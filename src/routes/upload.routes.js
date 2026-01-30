@@ -4,7 +4,7 @@ const { parseCSV } = require("../services/csv.service");
 const { getTemplate } = require("../templates");
 const crypto = require("crypto");
 const { log, error } = require("../utils/logger");
-const WAIT_BETWEEN_MESSAGES = process.env.WAIT_BETWEEN_MESSAGES || 120000 ; // pega do .env
+const WAIT_BETWEEN_MESSAGES = process.env.WAIT_BETWEEN_MESSAGES || 180000 ; // pega do .env
 
 const router = Router();
 
