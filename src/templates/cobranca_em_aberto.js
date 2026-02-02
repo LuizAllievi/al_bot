@@ -27,7 +27,11 @@ E a nota fiscal está disponível para download no link: ${nfLink}.`;
       .filter(id => id);    // remove strings vazias
   }
   const managerName = row[6];
-  const qrCodePix = row[8];
+  const notaDebito = row[8];
+
+
+
+  const qrCodePix = row[7];
   var consultingInvoicesText = "";
 
   console.log(`consult id ${consultingIds}`)
@@ -77,6 +81,18 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
       media
     });
   }
+
+  if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
+    var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
+    if (media) {
+      messages.push({
+        type: "media",
+        to,
+        media
+      });
+    }
+  }
+
 
   for (id in consultingIds) {
 
