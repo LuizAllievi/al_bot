@@ -109,18 +109,20 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
 
   if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
+    const breakPix = (pix) =>
+      pix.slice(0, 3) + "\u200B" + pix.slice(3);
+
     messages.push({
       type: "text",
       to,
-      body: `Para facilitar o seu pagamento segue abaixo código pix.`.trim()
+      body: "Para facilitar o seu pagamento, segue abaixo o código Pix."
     });
 
     messages.push({
       type: "text",
       to,
-      body: `${qrCodePix}`.trim()
+      body: breakPix(qrCodePix)
     });
-
 
   }
   return messages; // retorna lista de mensagens + arquivos, cada um com o número
