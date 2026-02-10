@@ -112,14 +112,15 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
     messages.push({
       type: "text",
       to,
-      body: `Para facilitar o seu pagamento segue abaixo código pix.`.trim()
+      body: `Para facilitar o seu pagamento, copie no link abaixo, o código pix.`.trim()
     });
 
     messages.push({
       type: "text",
       to,
-      body: `${qrCodePix}`.trim()
+      body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
     });
+
 
 
   }
