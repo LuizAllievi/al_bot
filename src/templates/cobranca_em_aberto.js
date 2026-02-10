@@ -109,20 +109,19 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
 
   if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
-    const breakPix = (pix) =>
-      pix.slice(0, 3) + "\u200B" + pix.slice(3);
-
     messages.push({
       type: "text",
       to,
-      body: "Para facilitar o seu pagamento, segue abaixo o código Pix."
+      body: `Para facilitar o seu pagamento, copie no link abaixo, o código pix.`.trim()
     });
 
     messages.push({
       type: "text",
       to,
-      body: breakPix(qrCodePix)
+      body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
     });
+
+
 
   }
   return messages; // retorna lista de mensagens + arquivos, cada um com o número
