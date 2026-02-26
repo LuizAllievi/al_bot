@@ -1,5 +1,5 @@
 const { createMediaFromUrl } = require("./enviar_arquivo"); // função para baixar arquivos e criar Media
-const API_HOST = process.env.API_HOST || "https://localhost:8443"; // pega do .env
+const API_HOST = process.env.API_HOST ||  "https://localhost:8443"; // pega do .env
 
 
 module.exports = async (row) => {
@@ -9,16 +9,6 @@ module.exports = async (row) => {
   const billetId = row[0];
   const companyName = row[1];
   const dueDate = row[2];
-  const nfLink = row[4];
-  let nfText = "";
-
-  if (typeof nfLink === "string" && nfLink.trim() !== "") {
-
-    nfText = `
-
-E a nota fiscal está disponível para download no link: ${nfLink}.`;
-  }
-
   let consultingIds = [];
   if (row[5] && typeof row[5] === "string") {
     consultingIds = row[5]
@@ -27,11 +17,7 @@ E a nota fiscal está disponível para download no link: ${nfLink}.`;
       .filter(id => id);    // remove strings vazias
   }
   const managerName = row[6];
-  const notaDebito = row[8];
-
-
-
-  const qrCodePix = row[7];
+  const qrCodePix = row[8];
   var consultingInvoicesText = "";
 
   console.log(`consult id ${consultingIds}`)
@@ -62,16 +48,12 @@ E a nota fiscal está disponível para download no link: ${nfLink}.`;
   messages.push({
     type: "text",
     to,
-    body: `
-Olá, ${managerName}!🙋🏻‍♂️
-       
-A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.
-    
-Os boletos seguem abaixo ⬇️${nfText}`.trim()
+    body: `Prezado(a),  ${managerName}! Tudo bem?
+
+Estou entrando em contato para sinalizar que, conforme o sistema, há boleto em aberto que está em atraso, e que pode ocasionar o bloqueio de suas linhas em até 24 horas.
+
+Para evitarmos qualquer interrupção nos serviços, poderia, por gentileza, encaminhar o comprovante de pagamento referente ao boleto em aberto?`.trim()
   });
-
-
-
 
   var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
   if (media) {
@@ -81,18 +63,6 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
       media
     });
   }
-
-  if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
-    var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
-    if (media) {
-      messages.push({
-        type: "media",
-        to,
-        media
-      });
-    }
-  }
-
 
   for (id in consultingIds) {
 
@@ -106,23 +76,20 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
     }
   }
 
-
   if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
-    const breakPix = (pix) =>
-      pix.slice(0, 3) + "\u200B" + pix.slice(3);
-
     messages.push({
       type: "text",
       to,
-      body: "Para facilitar o seu pagamento, segue abaixo o código Pix."
+      body: `Para facilitar o seu pagamento segue abaixo código pix.`.trim()
     });
 
     messages.push({
       type: "text",
       to,
-      body: `\`\`\`\n${breakPix(qrCodePix)}\n\`\`\``
+      body: `${qrCodePix}`.trim()
     });
+
 
   }
   return messages; // retorna lista de mensagens + arquivos, cada um com o número
