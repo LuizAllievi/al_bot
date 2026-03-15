@@ -49,16 +49,17 @@ module.exports = async (row) => {
     type: "text",
     to,
     body: `
-Olá, ${managerName}!🙋🏻‍♂️
-       
-Informamos que não identificamos o pagamento do boleto do plano de Gestão de Telefonia da empresa ${companyName}, com vencimento em ${dueDate}.
-    
-Caso o pagamento tenha sido efetuado, seria possível no encaminhar o comprovante?
-     
-Estamos enviando novamente o boleto em anexo. ${consultingInvoicesText}
+COMUNICADO FINANCEIRO
+A1 GESTÃO
 
-Caso surgir alguma dúvida ou dificuldade para efetuar o pagamento, nossa equipe de suporte está à disposição.
-    `.trim()
+O boleto referente ao plano de Gestão de Telefonia da empresa ${companyName} consta em aberto em nosso sistema.
+
+Vencimento: ${dueDate}.
+
+Salientamos que após 15 dias do vencimento, poderá ocorrer o bloqueio parcial das linhas móveis. 
+
+Estamos sempre a disposição.
+`.trim()
   });
 
   var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
