@@ -4,7 +4,7 @@ const { parseCSV } = require("../services/csv.service");
 const { getTemplate } = require("../templates");
 const crypto = require("crypto");
 const { log, error } = require("../utils/logger");
-const WAIT_BETWEEN_MESSAGES = process.env.WAIT_BETWEEN_MESSAGES || 180000 ; // pega do .env
+const WAIT_BETWEEN_MESSAGES =  360000; // pega do .env
 
 const router = Router();
 
@@ -71,7 +71,9 @@ router.post("/", async (req, res) => {
             await client.sendMessage(p.to, p.media);
           }
           enviados++;
-          console.log(`${requestId} - Enviado linha ${i} item ${j + 1}/${payloads.length}`);
+          console.log(
+  			`${requestId} - [${getTime()}] Linha ${i}/${rows.length - 1} | item ${j + 1}/${payloads.length}`
+			);
           await new Promise(r => setTimeout(r, 2000));
         } catch (err) {
           error(requestId, `Erro envio linha ${i} item ${j}`, err.message);
@@ -86,4 +88,7 @@ router.post("/", async (req, res) => {
   });
 });
 
+function getTime() {
+  return new Date().toLocaleTimeString("pt-BR", { hour12: false });
+}
 module.exports = router;
