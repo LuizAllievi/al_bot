@@ -1,10 +1,16 @@
 const { createMediaFromUrl } = require("../templates/enviar_arquivo"); // função para baixar arquivos e criar Media
-const API_HOST = process.env.API_HOST ||  "https://localhost:8443"; // pega do .env
+const API_HOST = process.env.API_HOST || "https://localhost:8443"; // pega do .env
 
 
 module.exports = async (row) => {
-  const telefone = row[3];
-  if (!telefone) return [];
+  const telefoneRaw = row[3];
+  if (!telefoneRaw) return [];
+
+  const telefones = telefoneRaw
+    .split(",")
+    .map(t => t.trim())
+    .filter(t => t);
+
 
   const billetId = row[0];
   const companyName = row[1];
@@ -41,14 +47,16 @@ module.exports = async (row) => {
       d;
   }
 
-  const to = `55${telefone}@c.us`;
   const messages = [];
 
-  // Mensagem de texto principal
-  messages.push({
-    type: "text",
-    to,
-    body: `
+
+  for (const telefone of telefones) {
+    const to = `55${telefone}@c.us`;
+    // Mensagem de texto principal
+    messages.push({
+      type: "text",
+      to,
+      body: `
 COMUNICADO FINANCEIRO
 A1 GESTÃO
 
@@ -60,20 +68,9 @@ Salientamos que após 15 dias do vencimento, poderá ocorrer o bloqueio parcial 
 
 Estamos sempre a disposição.
 `.trim()
-  });
-
-  var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
-  if (media) {
-    messages.push({
-      type: "media",
-      to,
-      media
     });
-  }
 
-  for (id in consultingIds) {
-
-    var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
+    var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
     if (media) {
       messages.push({
         type: "media",
@@ -81,23 +78,46 @@ Estamos sempre a disposição.
         media
       });
     }
-  }
 
-  if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
+    for (id in consultingIds) {
 
-    messages.push({
-      type: "text",
-      to,
-      body: `Para facilitar o seu pagamento segue abaixo código pix.`.trim()
-    });
+      var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
+      if (media) {
+        messages.push({
+          type: "media",
+          to,
+          media
+        });
+      }
+    }
 
-    messages.push({
-      type: "text",
-      to,
-      body: `${qrCodePix}`.trim()
-    });
+    if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
+      messages.push({
+        type: "text",
+        to,
+        body: `Para facilitar o seu pagamento segue abaixo código pix.`.trim()
+      });
 
+      messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
+      });
+
+    } else {
+      messages.push({
+        type: "text",
+        to,
+        body: `Seu boleto também está disponível para download no link abaixo:`.trim()
+      });
+
+      messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
+      });
+    }
   }
   return messages; // retorna lista de mensagens + arquivos, cada um com o número
 };
