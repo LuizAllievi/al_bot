@@ -102,9 +102,21 @@ Estamos sempre a disposição.
       messages.push({
         type: "text",
         to,
-        body: `${qrCodePix}`.trim()
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
       });
 
+    } else {
+      messages.push({
+        type: "text",
+        to,
+        body: `Seu boleto também está disponível para download no link abaixo:`.trim()
+      });
+
+      messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
+      });
     }
   }
   return messages; // retorna lista de mensagens + arquivos, cada um com o número

@@ -92,10 +92,23 @@ Para evitarmos qualquer interrupção nos serviços, poderia, por gentileza, enc
         body: `Para facilitar o seu pagamento segue abaixo código pix.`.trim()
       });
 
+     messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
+      });
+    } else {
+      
       messages.push({
         type: "text",
         to,
-        body: `${qrCodePix}`.trim()
+        body: `Seu boleto também está disponível para download no link abaixo:`.trim()
+      });
+
+      messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
       });
     }
 

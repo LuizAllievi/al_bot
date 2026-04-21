@@ -74,9 +74,8 @@ Olá, ${managerName}!🙋🏻‍♂️
        
 A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.
     
-Os boletos seguem abaixo ⬇️${nfText}`.trim()
+Os boletos seguem abaixo ⬇️`.trim()
     });
-
 
 
 
@@ -86,6 +85,14 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
         type: "media",
         to,
         media
+      });
+    }
+
+    if (nfText) {
+      messages.push({
+        type: "text",
+        to,
+        body: nfText.trim()
       });
     }
 
@@ -128,6 +135,19 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
         body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
       });
 
+    } else {
+
+      messages.push({
+        type: "text",
+        to,
+        body: `Seu boleto também está disponível para download no link abaixo:`.trim()
+      });
+
+      messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
+      });
     }
 
   }
