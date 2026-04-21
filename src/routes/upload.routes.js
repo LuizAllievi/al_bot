@@ -58,11 +58,11 @@ router.post("/", async (req, res) => {
   try {
     qr = await new Promise((resolve, reject) => {
       const timeout = setTimeout(async () => {
-        error(requestId, "QR não gerado a tempo");
+        error(requestId, "QR não gerado a tempo, destruindo request");
 
         await safeDestroy();
 
-        reject(new Error("QR não gerado a tempo"));
+        reject(new Error("QR não gerado a tempo, request destruída, tente novamente."));
       }, 15000);
 
       client.once("qr", qr => {
