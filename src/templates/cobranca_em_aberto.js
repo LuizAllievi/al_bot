@@ -3,8 +3,13 @@ const API_HOST = process.env.API_HOST || "https://localhost:8443"; // pega do .e
 
 
 module.exports = async (row) => {
-  const telefone = row[3];
-  if (!telefone) return [];
+  const telefoneRaw = row[3];
+  if (!telefoneRaw) return [];
+
+  const telefones = telefoneRaw
+    .split(",")
+    .map(t => t.trim())
+    .filter(t => t);
 
   const billetId = row[0];
   const companyName = row[1];
@@ -55,35 +60,27 @@ E a nota fiscal está disponível para download no link: ${nfLink}.`;
       d;
   }
 
-  const to = `55${telefone}@c.us`;
   const messages = [];
 
-  // Mensagem de texto principal
-  messages.push({
-    type: "text",
-    to,
-    body: `
+  for (const telefone of telefones) {
+    const to = `55${telefone}@c.us`;
+
+    // Mensagem de texto principal
+    messages.push({
+      type: "text",
+      to,
+      body: `
 Olá, ${managerName}!🙋🏻‍♂️
        
 A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.
     
 Os boletos seguem abaixo ⬇️${nfText}`.trim()
-  });
-
-
-
-
-  var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
-  if (media) {
-    messages.push({
-      type: "media",
-      to,
-      media
     });
-  }
 
-  if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
-    var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
+
+
+
+    var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
     if (media) {
       messages.push({
         type: "media",
@@ -91,37 +88,47 @@ Os boletos seguem abaixo ⬇️${nfText}`.trim()
         media
       });
     }
-  }
 
-
-  for (id in consultingIds) {
-
-    var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
-    if (media) {
-      messages.push({
-        type: "media",
-        to,
-        media
-      });
+    if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
+      var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
+      if (media) {
+        messages.push({
+          type: "media",
+          to,
+          media
+        });
+      }
     }
-  }
 
 
-  if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
+    for (id in consultingIds) {
 
-    messages.push({
-      type: "text",
-      to,
-      body: `Para facilitar o seu pagamento, copie no link abaixo, o código pix.`.trim()
-    });
-
-    messages.push({
-      type: "text",
-      to,
-      body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
-    });
+      var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
+      if (media) {
+        messages.push({
+          type: "media",
+          to,
+          media
+        });
+      }
+    }
 
 
+    if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
+
+      messages.push({
+        type: "text",
+        to,
+        body: `Para facilitar o seu pagamento, copie no link abaixo, o código pix.`.trim()
+      });
+
+      messages.push({
+        type: "text",
+        to,
+        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
+      });
+
+    }
 
   }
   return messages; // retorna lista de mensagens + arquivos, cada um com o número
