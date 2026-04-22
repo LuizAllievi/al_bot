@@ -22,7 +22,7 @@ module.exports = async (row) => {
       .filter(id => id);    // remove strings vazias
   }
   const managerName = row[6];
-  const qrCodePix = row[8];
+  const qrCodePix = row[7];
   var consultingInvoicesText = "";
 
   console.log(`consult id ${consultingIds}`)
