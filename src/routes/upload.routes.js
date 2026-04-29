@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
 
   // 🔹 espera o primeiro QR ser gerado
   const qr = await new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error("QR não gerado a tempo")), 15000);
+    const timeout = setTimeout(() => reject(new Error("QR não gerado a tempo")), 60000);
 
     client.once("qr", qr => {
       clearTimeout(timeout);
