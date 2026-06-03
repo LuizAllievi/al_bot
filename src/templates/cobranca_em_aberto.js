@@ -73,20 +73,19 @@ E a nota fiscal está disponível para download no link: ${nfLink}.`;
 Olá, ${managerName}!🙋🏻‍♂️
        
 A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.
-    
-Os boletos seguem abaixo ⬇️`.trim()
+`.trim()
     });
 
 
 
-    var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
-    if (media) {
-      messages.push({
-        type: "media",
-        to,
-        media
-      });
-    }
+    // var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
+    // if (media) {
+    //   messages.push({
+    //     type: "media",
+    //     to,
+    //     media
+    //   });
+    // }
 
     if (nfText) {
       messages.push({

@@ -70,14 +70,14 @@ Estamos sempre a disposição.
 `.trim()
     });
 
-    var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
-    if (media) {
-      messages.push({
-        type: "media",
-        to,
-        media
-      });
-    }
+    // var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
+    // if (media) {
+    //   messages.push({
+    //     type: "media",
+    //     to,
+    //     media
+    //   });
+    // }
 
     for (id in consultingIds) {
 
