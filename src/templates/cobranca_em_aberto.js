@@ -95,37 +95,42 @@ A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o s
       });
     }
 
-    if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
-      var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
-      if (media) {
-        messages.push({
-          type: "media",
-          to,
-          media
-        });
-      }
-    }
+    // if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
+    //   var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
+    //   if (media) {
+    //     messages.push({
+    //       type: "media",
+    //       to,
+    //       media
+    //     });
+    //   }
+    // }
 
 
-    for (id in consultingIds) {
+    // for (id in consultingIds) {
 
-      var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
-      if (media) {
-        messages.push({
-          type: "media",
-          to,
-          media
-        });
-      }
-    }
+    //   var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
+    //   if (media) {
+    //     messages.push({
+    //       type: "media",
+    //       to,
+    //       media
+    //     });
+    //   }
+    // }
 
 
     if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
+      const messagesText = [
+        `Para facilitar o seu pagamento, acesse o link abaixo para copiar o código Pix e realizar o download do boleto.`,
+        `Para facilitar o seu pagamento, acesse o link abaixo. Nele, você poderá copiar o código Pix e fazer o download do boleto.`
+      ];
+
       messages.push({
         type: "text",
         to,
-        body: `Para facilitar o seu pagamento, copie no link abaixo, o código pix.`.trim()
+        body: messagesText[Math.floor(Math.random() * messagesText.length)]
       });
 
       messages.push({
@@ -136,10 +141,15 @@ A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o s
 
     } else {
 
+      const messagesText = [
+        `Para facilitar o seu pagamento, acesse o link abaixo para copiar o código Pix e realizar o download do boleto.`,
+        `Para facilitar o seu pagamento, acesse o link abaixo. Nele, você poderá copiar o código Pix e fazer o download do boleto.`
+      ];
+
       messages.push({
         type: "text",
         to,
-        body: `Seu boleto também está disponível para download no link abaixo:`.trim()
+        body: messagesText[Math.floor(Math.random() * messagesText.length)]
       });
 
       messages.push({
