@@ -142,8 +142,8 @@ A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o s
     } else {
 
       const messagesText = [
-        `Para facilitar o seu pagamento, acesse o link abaixo para copiar o código Pix e realizar o download do boleto.`,
-        `Para facilitar o seu pagamento, acesse o link abaixo. Nele, você poderá copiar o código Pix e fazer o download do boleto.`
+        `Para facilitar o seu pagamento, acesse o link abaixo para realizar o download do boleto.`,
+        `Para facilitar o seu pagamento, acesse o link abaixo. Nele, você poderá fazer o download do boleto.`
       ];
 
       messages.push({
