@@ -1,7 +1,6 @@
 const { createMediaFromUrl } = require("./enviar_arquivo"); // função para baixar arquivos e criar Media
 const API_HOST = process.env.API_HOST || "https://localhost:8443"; // pega do .env
 
-
 module.exports = async (row) => {
   const telefoneRaw = row[3];
   if (!telefoneRaw) return [];
@@ -15,141 +14,78 @@ module.exports = async (row) => {
   const companyName = row[1];
   const dueDate = row[2];
   const nfLink = row[4];
-  let nfText = "";
-
-  if (typeof nfLink === "string" && nfLink.trim() !== "") {
-
-    nfText = `
-
-E a nota fiscal está disponível para download no link: ${nfLink}.`;
-  }
-
-  let consultingIds = [];
-  if (row[5] && typeof row[5] === "string") {
-    consultingIds = row[5]
-      .split(",")           // separa por vírgula
-      .map(id => id.trim()) // remove espaços
-      .filter(id => id);    // remove strings vazias
-  }
   const managerName = row[6];
+  const qrCodePix = row[7];
   const notaDebito = row[8];
 
+  let consultingIds = [];
 
-
-  const qrCodePix = row[7];
-  var consultingInvoicesText = "";
-
-  console.log(`consult id ${consultingIds}`)
-
-  if (consultingIds != null && consultingIds.length > 0) {
-    var e = " e";
-    var d = ",";
-    var nfMText = "m";
-    var pluralFaturas = "";
-    if (consultingIds.length > 1) {
-      pluralFaturas = "s";
-    }
-
-    consultingInvoicesText =
-      e +
-      " " +
-      consultingIds.length +
-      " fatura" +
-      pluralFaturas +
-      " Vivo, em aberto na operadora" +
-      d;
+  if (row[5] && typeof row[5] === "string") {
+    consultingIds = row[5]
+      .split(",")
+      .map(id => id.trim())
+      .filter(id => id);
   }
 
   const messages = [];
 
   for (const telefone of telefones) {
-    const to = `55${telefone}@c.us`;
 
-    // Mensagem de texto principal
-    messages.push({
-      type: "text",
-      to,
-      body: `
-Olá, ${managerName}!🙋🏻‍♂️
-       
-A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.
-    
-Os boletos seguem abaixo ⬇️`.trim()
-    });
+    let body = `Olá, ${managerName}!🙋🏻‍♂️
 
+A fatura da Gestão de Telefonia da empresa ${companyName}, foi enviada para o seu e-mail, com vencimento para ${dueDate}.`;
 
+    // Faturas Vivo em aberto
+    if (consultingIds.length > 0) {
+      const plural = consultingIds.length > 1 ? "s" : "";
 
-    var media = await createMediaFromUrl(`${API_HOST}/downloadBillet/${billetId}`, `Boleto A1 Gestão de Telefonia - ${dueDate}.pdf`);
-    if (media) {
-      messages.push({
-        type: "media",
-        to,
-        media
-      });
+      body += `
+
+Identificamos também ${consultingIds.length} fatura${plural} Vivo em aberto na operadora,`;
     }
 
-    if (nfText) {
-      messages.push({
-        type: "text",
-        to,
-        body: nfText.trim()
-      });
+    // Nota fiscal
+    if (typeof nfLink === "string" && nfLink.trim() !== "") {
+      body += `
+
+E a nota fiscal está disponível para download no link: ${nfLink}.`;
     }
 
-    if (typeof notaDebito === "string" && notaDebito.trim() !== "" && notaDebito.trim() == "Download") {
-      var media = await createMediaFromUrl(`${API_HOST}/nfDownload/${billetId}`, `Nota de Débito - ${billetId}.pdf`);
-      if (media) {
-        messages.push({
-          type: "media",
-          to,
-          media
-        });
-      }
-    }
-
-
-    for (id in consultingIds) {
-
-      var media = await createMediaFromUrl(`${API_HOST}/latestInvoiceDownload/clientAccountBilling/${consultingIds[id]}`, `Fatura Vivo  - ${(parseInt(id) + 1)}.pdf`);
-      if (media) {
-        messages.push({
-          type: "media",
-          to,
-          media
-        });
-      }
-    }
-
-
+    // Link do boleto / PIX
     if (typeof qrCodePix === "string" && qrCodePix.trim() !== "") {
 
-      messages.push({
-        type: "text",
-        to,
-        body: `Para facilitar o seu pagamento, copie no link abaixo, o código pix.`.trim()
-      });
+      const messagesText = [
+        `Para facilitar o seu pagamento, acesse o link abaixo para copiar o código Pix e realizar o download do boleto.`,
+        `Para facilitar o seu pagamento, acesse o link abaixo. Nele, você poderá copiar o código Pix e fazer o download do boleto.`
+      ];
 
-      messages.push({
-        type: "text",
-        to,
-        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
-      });
+      body += `
+
+${messagesText[Math.floor(Math.random() * messagesText.length)]}
+
+https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`;
 
     } else {
 
-      messages.push({
-        type: "text",
-        to,
-        body: `Seu boleto também está disponível para download no link abaixo:`.trim()
-      });
+      const messagesText = [
+        `Para facilitar o seu pagamento, acesse o link abaixo para realizar o download do boleto.`,
+        `Para facilitar o seu pagamento, acesse o link abaixo. Nele, você poderá fazer o download do boleto.`
+      ];
 
-      messages.push({
-        type: "text",
-        to,
-        body: `https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`.trim()
-      });
+      body += `
+
+${messagesText[Math.floor(Math.random() * messagesText.length)]}
+
+https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`;
     }
 
+    // UM ÚNICO PUSH
+    messages.push({
+      type: "text",
+      to: `55${telefone}@c.us`,
+      body: body.trim()
+    });
   }
-  return messages; // retorna lista de mensagens + arquivos, cada um com o número
+
+  return messages;
 };
