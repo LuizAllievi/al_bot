@@ -17,6 +17,7 @@ module.exports = async (row) => {
   const managerName = row[6];
   const qrCodePix = row[7];
   const notaDebito = row[8];
+  const cnpj = row[9];
 
   let consultingIds = [];
 
@@ -78,6 +79,21 @@ ${messagesText[Math.floor(Math.random() * messagesText.length)]}
 
 https://crm.a1gestao.com.br/getBilletPixCode/${billetId}`;
     }
+
+    // Portal do Cliente
+    body += `
+
+🆕 *NOVIDADE!*
+
+O Portal do Cliente A1 Gestão chegou para facilitar o seu acesso às faturas e à documentação financeira.
+
+Acesse agora:
+https://crm.a1gestao.com.br/portalDoCliente
+
+*Login:* ${cnpj}
+*Chave de acesso:* ${billetId}
+
+A partir de agora, nosso canal oficial para envio das faturas será o Portal do Cliente.`;
 
     // UM ÚNICO PUSH
     messages.push({
