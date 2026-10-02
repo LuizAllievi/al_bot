@@ -18,6 +18,8 @@ module.exports = async (row) => {
   const qrCodePix = row[7];
   const notaDebito = row[8];
   const cnpj = row[9];
+  const idCliente = row[10];
+
 
   let consultingIds = [];
 
@@ -91,7 +93,7 @@ Acesse agora:
 https://crm.a1gestao.com.br/portalDoCliente
 
 *Login:* ${cnpj}
-*Chave de acesso:* ${billetId}
+*Chave de acesso:* ${idCliente}
 
 A partir de agora, nosso canal oficial para envio das faturas será o Portal do Cliente.`;
 
