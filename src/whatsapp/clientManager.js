@@ -13,7 +13,7 @@ function createTempClient(operator, requestId) {
     authStrategy: new NoAuth(),
     authTimeoutMs: 120000,
     puppeteer: {
-      headless: false,
+      headless: true,
 
       args: [
         "--no-sandbox",
