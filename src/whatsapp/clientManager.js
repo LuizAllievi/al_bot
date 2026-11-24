@@ -11,9 +11,9 @@ function createTempClient(operator, requestId) {
 
   const client = new Client({
     authStrategy: new NoAuth(),
-
+    authTimeoutMs: 120000,
     puppeteer: {
-      headless: true,
+      headless: false,
 
       args: [
         "--no-sandbox",
@@ -22,6 +22,72 @@ function createTempClient(operator, requestId) {
       ]
     }
   });
+
+  // // DIAGNÓSTICO DO PUPPETEER
+
+  // const diagnosticTimer = setInterval(async () => {
+
+  //   if (!client.pupPage) return;
+
+  //   clearInterval(diagnosticTimer);
+
+  //   const page = client.pupPage;
+
+  //   console.log("URL:", await page.url());
+
+  //   console.log("DIAGNÓSTICO:", await page.evaluate(() => ({
+  //     url: location.href,
+  //     title: document.title,
+  //     body: document.body?.innerText?.substring(0, 1000),
+  //     debugVersion: window.Debug?.VERSION || null,
+  //     socketModel: typeof window.require === "function"
+  //       ? (() => {
+  //         try {
+  //           return typeof window.require("WAWebSocketModel");
+  //         } catch (e) {
+  //           return e.message;
+  //         }
+  //       })()
+  //       : "require indisponível"
+  //   })));
+
+  //   console.log(`${requestId} - 🔎 DIAGNÓSTICO DO NAVEGADOR`);
+
+  //   page.on("console", msg => {
+  //     console.log(
+  //       `${requestId} - BROWSER CONSOLE [${msg.type()}]:`,
+  //       msg.text()
+  //     );
+  //   });
+
+  //   page.on("pageerror", error => {
+  //     console.error(
+  //       `${requestId} - ❌ BROWSER PAGE ERROR:`,
+  //       error
+  //     );
+  //   });
+
+  //   page.on("requestfailed", request => {
+  //     console.error(
+  //       `${requestId} - ❌ REQUEST FAILED:`,
+  //       request.url(),
+  //       request.failure()?.errorText
+  //     );
+  //   });
+
+  //   page.on("response", response => {
+
+  //     if (response.status() >= 400) {
+  //       console.error(
+  //         `${requestId} - HTTP ERROR:`,
+  //         response.status(),
+  //         response.url()
+  //       );
+  //     }
+
+  //   });
+
+  // }, 500);
 
   client._state = {
     ready: false,
